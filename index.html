@@ -228,7 +228,7 @@ const SAMPLE = {
     "アクセスURL": ""
   },
   events: [
-    { id: "s1", date: "2026-10-24", start: "09:30", end: "12:00", title: "第2回 学校説明会", place: "本校 体育館", target: "中学3年生と保護者", detail: "学校紹介、授業見学、部活動見学があります。上履きをお持ちください。", formUrl: "https://example.com/", status: "受付中" },
+    { id: "s1", date: "2026-10-24", reception: "09:00", start: "09:30", end: "12:00", title: "第2回 学校説明会", place: "本校 体育館", target: "中学3年生と保護者", detail: "学校紹介、授業見学、部活動見学があります。上履きをお持ちください。", formUrl: "https://example.com/", status: "受付中" },
     { id: "s2", date: "2026-11-14", start: "14:00", end: "16:00", title: "第3回 学校説明会", place: "本校 体育館", target: "中学生と保護者", detail: "入試の概要と在校生による学校生活の紹介。", formUrl: "https://example.com/", status: "受付前" },
     { id: "s3", date: "2026-12-12", start: "10:00", end: "12:00", title: "個別相談会", place: "本校 会議室", target: "中学3年生と保護者", detail: "1組20分程度。", formUrl: "", status: "受付前" }
   ],
@@ -290,7 +290,7 @@ function renderHero(data, upcoming) {
   const d = toDate(next.date);
   const days = Math.round((d - today0()) / 86400000);
   const when = days === 0 ? "本日開催" : days === 1 ? "あす開催" : `あと<b>${days}</b>日`;
-  const time = next.start ? `${esc(next.start)}〜${esc(next.end || "")}` : "";
+  const time = (next.start ? `${esc(next.start)}〜${esc(next.end || "")}` : "") + (next.reception ? `（受付 ${esc(next.reception)}〜）` : "");
   $("hero").innerHTML = `
     <p class="school">${name}</p>
     <p class="next-label">次の学校説明会</p>
@@ -304,7 +304,8 @@ function calendarUrl(ev) {
   const d = String(ev.date).replace(/-/g, "");
   const t = (s) => String(s || "").replace(":", "") + "00";
   const dates = ev.start ? `${d}T${t(ev.start)}/${d}T${t(ev.end || ev.start)}` : `${d}/${d}`;
-  const p = new URLSearchParams({ action: "TEMPLATE", text: `八尾高校 ${ev.title}`, dates, ctz: "Asia/Tokyo", location: ev.place || "", details: ev.detail || "" });
+  const details = [ev.reception ? `受付 ${ev.reception}〜` : "", ev.detail || ""].filter(Boolean).join("\n");
+  const p = new URLSearchParams({ action: "TEMPLATE", text: `八尾高校 ${ev.title}`, dates, ctz: "Asia/Tokyo", location: ev.place || "", details });
   return "https://calendar.google.com/calendar/render?" + p.toString();
 }
 
@@ -322,6 +323,7 @@ function renderEvents(upcoming) {
         <h3 class="ev-title">${esc(ev.title)}</h3>
         <p class="ev-meta">
           <span>${d.getMonth() + 1}月${d.getDate()}日（${WD[d.getDay()]}）${ev.start ? " " + esc(ev.start) + "〜" + esc(ev.end || "") : ""}</span>
+          ${ev.reception ? `<span>受付：${esc(ev.reception)}〜</span>` : ""}
           ${ev.place ? `<span>会場：${esc(ev.place)}</span>` : ""}
           ${ev.target ? `<span>対象：${esc(ev.target)}</span>` : ""}
         </p>
