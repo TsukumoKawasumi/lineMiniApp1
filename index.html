@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>八尾高校 学校説明会・お知らせ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ===== 色とサイズ（ここだけ変えれば全体の見た目が変わります） ===== */
+:root {
+  --ai: #233F73;          /* 藍：学校の基調色 */
+  --ai-deep: #172B52;
+  --ai-stripe: #2B4A84;
+  --paper: #F4F6F9;
+  --surface: #FFFFFF;
+  --ink: #1A2233;
+  --muted: #5B6578;
+  --line: #DCE1E9;
+  --accent-text: #233F73;
+  --yamabuki: #E3A417;    /* 新着の印 */
+  --ok: #2F7D5B;
+  --ok-bg: #E4F2EB;
+  --off-bg: #ECEFF3;
+  --radius-s: 6px;
+  --radius-m: 12px;
+  --tabbar-h: 60px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ai: #1B3160; --ai-deep: #111F3E; --ai-stripe: #213A70;
+    --paper: #0F141D; --surface: #171F2D; --ink: #E6EBF3; --muted: #9AA6B8;
+    --line: #2A3447; --accent-text: #9DB5E6; --ok: #6CC49A; --ok-bg: #173228; --off-bg: #222B3A;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --ai: #1B3160; --ai-deep: #111F3E; --ai-stripe: #213A70;
+  --paper: #0F141D; --surface: #171F2D; --ink: #E6EBF3; --muted: #9AA6B8;
+  --line: #2A3447; --accent-text: #9DB5E6; --ok: #6CC49A; --ok-bg: #173228; --off-bg: #222B3A;
+  color-scheme: dark;
+}
+
+:root { box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+*, *::before, *::after { box-sizing: inherit; }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font-family: "BIZ UDPGothic", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
+  font-size: 16px; line-height: 1.7; letter-spacing: .02em;
+  padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px) + 16px);
+}
+a { color: var(--accent-text); }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--yamabuki); outline-offset: 2px; }
+.wrap { max-width: 560px; margin: 0 auto; }
+
+/* ===== 藍の縞ヘッダー（河内木綿の縞をモチーフに） ===== */
+.band {
+  color: #fff;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 9px, rgba(255,255,255,.06) 9px 10px, transparent 10px 13px, rgba(255,255,255,.04) 13px 14px),
+    linear-gradient(160deg, var(--ai) 0%, var(--ai-deep) 100%);
+  padding: 20px 20px 24px;
+}
+.school { margin: 0; font-size: 14px; font-weight: 700; opacity: .85; }
+.next-label { margin: 18px 0 2px; font-size: 13px; opacity: .8; }
+.next-date { margin: 0; font-size: 34px; font-weight: 700; line-height: 1.25; font-variant-numeric: tabular-nums; }
+.next-date small { font-size: 18px; margin-left: 2px; }
+.next-title { margin: 4px 0 0; font-size: 16px; }
+.countdown {
+  display: inline-block; margin-top: 14px; padding: 4px 12px; border-radius: 999px;
+  background: rgba(255,255,255,.14); font-size: 14px; font-variant-numeric: tabular-nums;
+}
+.countdown b { font-size: 18px; margin: 0 2px; }
+.next-empty { margin: 18px 0 0; font-size: 16px; opacity: .9; }
+
+/* ===== 画面上部のお知らせ帯 ===== */
+.notice {
+  margin: 12px 16px 0; padding: 10px 14px; border-radius: var(--radius-s);
+  background: var(--off-bg); color: var(--muted); font-size: 13px; line-height: 1.6;
+}
+.notice[hidden] { display: none; }
+
+/* ===== セクション ===== */
+section[hidden] { display: none; }
+.sec-title { margin: 24px 20px 8px; font-size: 18px; font-weight: 700; }
+.sec-lead { margin: -4px 20px 12px; font-size: 13px; color: var(--muted); }
+.list { list-style: none; margin: 0; padding: 0; background: var(--surface); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.list > li + li { border-top: 1px solid var(--line); }
+.empty { padding: 28px 20px; color: var(--muted); text-align: center; font-size: 14px; }
+
+/* 説明会：めくりカレンダー風の日付 */
+.event { display: grid; grid-template-columns: 64px 1fr; gap: 14px; padding: 16px 20px; }
+.cal { width: 64px; border-radius: var(--radius-s); overflow: hidden; text-align: center; border: 1px solid var(--line); background: var(--surface); align-self: start; }
+.cal-m { background: var(--ai); color: #fff; font-size: 12px; font-weight: 700; padding: 2px 0; }
+.cal-d { font-size: 26px; font-weight: 700; line-height: 1.2; padding-top: 4px; font-variant-numeric: tabular-nums; }
+.cal-w { font-size: 12px; color: var(--muted); padding-bottom: 4px; }
+.cal-w.sat { color: #2D6CC0; } .cal-w.sun { color: #C0392B; }
+.ev-title { margin: 0; font-size: 17px; font-weight: 700; line-height: 1.5; }
+.ev-meta { margin: 4px 0 0; font-size: 14px; color: var(--muted); }
+.ev-meta span { display: block; }
+.ev-detail { margin: 8px 0 0; font-size: 14px; white-space: pre-wrap; }
+.status { display: inline-block; margin-top: 8px; padding: 1px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; background: var(--off-bg); color: var(--muted); }
+.status.open { background: var(--ok-bg); color: var(--ok); }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 16px;
+  border-radius: var(--radius-s); font-size: 15px; font-weight: 700; text-decoration: none; cursor: pointer;
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+}
+.btn.primary { background: var(--ai); border-color: var(--ai); color: #fff; }
+
+/* お知らせ */
+.news details { padding: 0; }
+.news summary { list-style: none; cursor: pointer; padding: 14px 20px; display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; }
+.news summary::-webkit-details-marker { display: none; }
+.news-date { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.news-cat { font-size: 12px; color: var(--accent-text); margin-left: 8px; }
+.news-title { grid-column: 1 / 2; font-size: 16px; font-weight: 700; line-height: 1.55; }
+.chev { grid-column: 2; grid-row: 1 / 3; align-self: center; width: 10px; height: 10px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg); transition: transform .15s; }
+details[open] .chev { transform: rotate(-135deg); }
+.new { display: inline-block; margin-left: 8px; padding: 0 7px; border-radius: 4px; background: var(--yamabuki); color: #2A1E00; font-size: 11px; font-weight: 700; vertical-align: 2px; }
+.pin { font-size: 12px; color: var(--muted); margin-left: 8px; }
+.news-body { padding: 0 20px 16px; font-size: 15px; white-space: pre-wrap; }
+.news-body .btn { margin-top: 10px; }
+
+/* 学校情報 */
+.row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px; text-decoration: none; color: var(--ink); min-height: 56px; }
+.row-sub { display: block; font-size: 13px; color: var(--muted); }
+.row::after { content: ""; flex: none; width: 8px; height: 8px; border-right: 2px solid var(--muted); border-top: 2px solid var(--muted); transform: rotate(45deg); }
+.info { padding: 14px 20px; font-size: 14px; }
+.info dt { color: var(--muted); font-size: 12px; }
+.info dd { margin: 0 0 10px; }
+.foot { margin: 20px; font-size: 12px; color: var(--muted); text-align: center; }
+.share { margin: 20px 20px 0; }
+.share .btn { width: 100%; }
+
+/* ===== 下部タブ ===== */
+.tabbar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 10;
+  background: var(--surface); border-top: 1px solid var(--line);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.tabbar .wrap { display: grid; grid-template-columns: repeat(3, 1fr); height: var(--tabbar-h); }
+.tab { position: relative; border: 0; background: none; cursor: pointer; font-size: 13px; font-weight: 700; color: var(--muted); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
+.tab svg { width: 22px; height: 22px; }
+.tab[aria-selected="true"] { color: var(--accent-text); }
+.tab[aria-selected="true"]::before { content: ""; position: absolute; top: 0; left: 30%; right: 30%; height: 3px; border-radius: 0 0 3px 3px; background: var(--ai); }
+.badge { position: absolute; top: 6px; left: calc(50% + 6px); min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--yamabuki); color: #2A1E00; font-size: 11px; line-height: 18px; }
+.badge[hidden] { display: none; }
+
+.loading { padding: 40px 20px; text-align: center; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<header class="band">
+  <div class="wrap" id="hero">
+    <p class="school" id="schoolName">大阪府立八尾高等学校</p>
+    <p class="next-empty">読み込み中です</p>
+  </div>
+</header>
+
+<div class="wrap">
+  <p class="notice" id="notice" hidden></p>
+
+  <main>
+    <section id="tab-events" aria-labelledby="t-events">
+      <h2 class="sec-title">学校説明会・イベント</h2>
+      <p class="sec-lead">申し込みが必要な回は「申し込む」から手続きしてください。</p>
+      <ul class="list" id="eventList"><li class="loading">読み込み中です</li></ul>
+    </section>
+
+    <section id="tab-news" aria-labelledby="t-news" hidden>
+      <h2 class="sec-title">お知らせ</h2>
+      <ul class="list news" id="newsList"></ul>
+    </section>
+
+    <section id="tab-info" aria-labelledby="t-info" hidden>
+      <h2 class="sec-title">学校情報</h2>
+      <ul class="list" id="linkList"></ul>
+      <h2 class="sec-title">所在地・連絡先</h2>
+      <div class="list"><dl class="info" id="schoolInfo"></dl></div>
+      <div class="share" id="shareBox" hidden><button class="btn" id="shareBtn" type="button">このアプリを友だちに送る</button></div>
+    </section>
+
+    <p class="foot" id="updated"></p>
+  </main>
+</div>
+
+<nav class="tabbar" aria-label="画面の切り替え">
+  <div class="wrap" role="tablist">
+    <button class="tab" id="t-events" role="tab" aria-selected="true" aria-controls="tab-events" data-tab="events">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>説明会
+    </button>
+    <button class="tab" id="t-news" role="tab" aria-selected="false" aria-controls="tab-news" data-tab="news">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 4h14v16H5zM8.5 8.5h7M8.5 12h7M8.5 15.5h4"/></svg>お知らせ
+      <span class="badge" id="newBadge" hidden></span>
+    </button>
+    <button class="tab" id="t-info" role="tab" aria-selected="false" aria-controls="tab-info" data-tab="info">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 10.5 12 4l8 6.5V20H4z"/><path d="M9.5 20v-5.5h5V20"/></svg>学校情報
+    </button>
+  </div>
+</nav>
+
+<script>
+/* =========================================================
+   設定（導入時にここだけ書き換えます）
+   API_URL : GASをウェブアプリとして公開したURL（空ならサンプル表示）
+   LIFF_ID : LINE Developersで発行されたLIFF ID（空ならLINE機能なし）
+   ========================================================= */
+const CONFIG = {
+  API_URL: "",
+  LIFF_ID: ""
+};
+
+/* ---------- サンプルデータ（API_URLが空のときだけ使います） ---------- */
+const SAMPLE = {
+  settings: {
+    "学校名": "大阪府立八尾高等学校",
+    "ホームページURL": "https://www2.osaka-c.ed.jp/yao/",
+    "住所": "〒581-0073 大阪府八尾市高町1-74",
+    "電話番号": "",
+    "アクセスURL": ""
+  },
+  events: [
+    { id: "s1", date: "2026-10-24", start: "09:30", end: "12:00", title: "第2回 学校説明会", place: "本校 体育館", target: "中学3年生と保護者", detail: "学校紹介、授業見学、部活動見学があります。上履きをお持ちください。", formUrl: "https://example.com/", status: "受付中" },
+    { id: "s2", date: "2026-11-14", start: "14:00", end: "16:00", title: "第3回 学校説明会", place: "本校 体育館", target: "中学生と保護者", detail: "入試の概要と在校生による学校生活の紹介。", formUrl: "https://example.com/", status: "受付前" },
+    { id: "s3", date: "2026-12-12", start: "10:00", end: "12:00", title: "個別相談会", place: "本校 会議室", target: "中学3年生と保護者", detail: "1組20分程度。", formUrl: "", status: "受付前" }
+  ],
+  news: [
+    { id: "n1", date: "2026-09-26", category: "行事", title: "文化祭のご案内", body: "一般公開の時間と入場方法をお知らせします。詳しくはホームページをご覧ください。", url: "https://www2.osaka-c.ed.jp/yao/", pinned: false },
+    { id: "n2", date: "2026-09-20", category: "入試", title: "第2回学校説明会の申し込みを始めました", body: "定員に達し次第締め切ります。", url: "", pinned: true },
+    { id: "n3", date: "2026-09-01", category: "お知らせ", title: "台風接近時の対応について", body: "暴風警報発令時の登校の扱いについてはホームページの「重要なお知らせ」をご確認ください。", url: "", pinned: false }
+  ],
+  links: [
+    { label: "学校ホームページ", url: "https://www2.osaka-c.ed.jp/yao/", note: "最新情報はこちら" }
+  ],
+  updatedAt: ""
+};
+
+/* ---------- 小さな道具 ---------- */
+const $ = (id) => document.getElementById(id);
+const WD = ["日", "月", "火", "水", "木", "金", "土"];
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const safeUrl = (u) => /^https?:\/\//i.test(String(u || "").trim()) ? String(u).trim() : "";
+const toDate = (s) => { const m = String(s || "").match(/^(\d{4})-(\d{1,2})-(\d{1,2})/); return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null; };
+const today0 = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; };
+const store = {
+  get(k, fb) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : fb; } catch (e) { return fb; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+};
+
+function showNotice(text) { const n = $("notice"); n.textContent = text; n.hidden = !text; }
+
+/* ---------- データ取得 ---------- */
+async function loadData() {
+  if (!CONFIG.API_URL) {
+    showNotice("サンプルデータを表示しています。導入時にAPI_URLを設定すると、スプレッドシートの内容に切り替わります。");
+    return SAMPLE;
+  }
+  try {
+    const res = await fetch(CONFIG.API_URL, { cache: "no-store" });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
+    store.set("yao_cache", data);
+    return data;
+  } catch (e) {
+    const cached = store.get("yao_cache", null);
+    if (cached) {
+      showNotice("最新の情報を取得できなかったため、前回表示した内容を表示しています。電波の良い場所で開き直してください。");
+      return cached;
+    }
+    throw e;
+  }
+}
+
+/* ---------- ヘッダー（次の説明会） ---------- */
+function renderHero(data, upcoming) {
+  const name = esc(data.settings?.["学校名"] || "大阪府立八尾高等学校");
+  const next = upcoming[0];
+  if (!next) {
+    $("hero").innerHTML = `<p class="school">${name}</p><p class="next-empty">現在予定している説明会はありません。<br>日程が決まり次第ここに表示します。</p>`;
+    return;
+  }
+  const d = toDate(next.date);
+  const days = Math.round((d - today0()) / 86400000);
+  const when = days === 0 ? "本日開催" : days === 1 ? "あす開催" : `あと<b>${days}</b>日`;
+  const time = next.start ? `${esc(next.start)}〜${esc(next.end || "")}` : "";
+  $("hero").innerHTML = `
+    <p class="school">${name}</p>
+    <p class="next-label">次の学校説明会</p>
+    <p class="next-date">${d.getMonth() + 1}月${d.getDate()}日<small>（${WD[d.getDay()]}）</small></p>
+    <p class="next-title">${esc(next.title)}${time ? "　" + time : ""}</p>
+    <span class="countdown">${when}</span>`;
+}
+
+/* ---------- 説明会一覧 ---------- */
+function calendarUrl(ev) {
+  const d = String(ev.date).replace(/-/g, "");
+  const t = (s) => String(s || "").replace(":", "") + "00";
+  const dates = ev.start ? `${d}T${t(ev.start)}/${d}T${t(ev.end || ev.start)}` : `${d}/${d}`;
+  const p = new URLSearchParams({ action: "TEMPLATE", text: `八尾高校 ${ev.title}`, dates, ctz: "Asia/Tokyo", location: ev.place || "", details: ev.detail || "" });
+  return "https://calendar.google.com/calendar/render?" + p.toString();
+}
+
+function renderEvents(upcoming) {
+  const ul = $("eventList");
+  if (!upcoming.length) { ul.innerHTML = `<li class="empty">予定している説明会・イベントはまだありません。</li>`; return; }
+  ul.innerHTML = upcoming.map((ev) => {
+    const d = toDate(ev.date);
+    const wcls = d.getDay() === 6 ? "sat" : d.getDay() === 0 ? "sun" : "";
+    const form = safeUrl(ev.formUrl);
+    const open = ev.status === "受付中";
+    return `<li class="event">
+      <div class="cal" aria-hidden="true"><div class="cal-m">${d.getMonth() + 1}月</div><div class="cal-d">${d.getDate()}</div><div class="cal-w ${wcls}">${WD[d.getDay()]}曜</div></div>
+      <div>
+        <h3 class="ev-title">${esc(ev.title)}</h3>
+        <p class="ev-meta">
+          <span>${d.getMonth() + 1}月${d.getDate()}日（${WD[d.getDay()]}）${ev.start ? " " + esc(ev.start) + "〜" + esc(ev.end || "") : ""}</span>
+          ${ev.place ? `<span>会場：${esc(ev.place)}</span>` : ""}
+          ${ev.target ? `<span>対象：${esc(ev.target)}</span>` : ""}
+        </p>
+        ${ev.detail ? `<p class="ev-detail">${esc(ev.detail)}</p>` : ""}
+        ${ev.status ? `<span class="status ${open ? "open" : ""}">${esc(ev.status)}</span>` : ""}
+        <div class="actions">
+          ${form && open ? `<a class="btn primary" href="${esc(form)}" target="_blank" rel="noopener">申し込む</a>` : ""}
+          <a class="btn" href="${esc(calendarUrl(ev))}" target="_blank" rel="noopener">カレンダーに追加</a>
+        </div>
+      </div>
+    </li>`;
+  }).join("");
+}
+
+/* ---------- お知らせ（新着の印つき） ---------- */
+let newIds = [];
+function renderNews(news) {
+  const seen = store.get("yao_seen", null);
+  const weekAgo = today0(); weekAgo.setDate(weekAgo.getDate() - 7);
+  newIds = news.filter((n) => seen ? !seen.includes(n.id) : (toDate(n.date) >= weekAgo)).map((n) => n.id);
+
+  const b = $("newBadge");
+  b.textContent = newIds.length; b.hidden = newIds.length === 0;
+  b.setAttribute("aria-label", `新着${newIds.length}件`);
+
+  const ul = $("newsList");
+  if (!news.length) { ul.innerHTML = `<li class="empty">お知らせはまだありません。</li>`; return; }
+  ul.innerHTML = news.map((n) => {
+    const d = toDate(n.date);
+    const url = safeUrl(n.url);
+    return `<li><details>
+      <summary>
+        <span><span class="news-date">${d ? `${d.getFullYear()}.${d.getMonth() + 1}.${d.getDate()}` : ""}</span>${n.category ? `<span class="news-cat">${esc(n.category)}</span>` : ""}${n.pinned ? `<span class="pin">固定</span>` : ""}</span>
+        <span class="news-title">${esc(n.title)}${newIds.includes(n.id) ? `<span class="new">新着</span>` : ""}</span>
+        <span class="chev" aria-hidden="true"></span>
+      </summary>
+      <div class="news-body">${esc(n.body || "")}${url ? `<br><a class="btn" href="${esc(url)}" target="_blank" rel="noopener">ホームページで詳しく見る</a>` : ""}</div>
+    </details></li>`;
+  }).join("");
+}
+
+/* ---------- 学校情報 ---------- */
+function renderInfo(data) {
+  const s = data.settings || {};
+  const links = (data.links || []).filter((l) => safeUrl(l.url));
+  $("linkList").innerHTML = links.length ? links.map((l) =>
+    `<li><a class="row" href="${esc(safeUrl(l.url))}" target="_blank" rel="noopener"><span>${esc(l.label)}${l.note ? `<span class="row-sub">${esc(l.note)}</span>` : ""}</span></a></li>`
+  ).join("") : `<li class="empty">リンクはまだありません。</li>`;
+
+  const tel = String(s["電話番号"] || "").trim();
+  const access = safeUrl(s["アクセスURL"]);
+  $("schoolInfo").innerHTML = `
+    <dt>学校名</dt><dd>${esc(s["学校名"] || "")}</dd>
+    ${s["住所"] ? `<dt>住所</dt><dd>${esc(s["住所"])}${access ? `<br><a href="${esc(access)}" target="_blank" rel="noopener">地図を開く</a>` : ""}</dd>` : ""}
+    ${tel ? `<dt>電話</dt><dd><a href="tel:${esc(tel.replace(/[^\d+]/g, ""))}">${esc(tel)}</a></dd>` : ""}`;
+}
+
+/* ---------- タブ切り替え ---------- */
+function selectTab(name) {
+  document.querySelectorAll(".tab").forEach((t) => t.setAttribute("aria-selected", String(t.dataset.tab === name)));
+  ["events", "news", "info"].forEach((n) => { $("tab-" + n).hidden = n !== name; });
+  window.scrollTo(0, 0);
+  if (name === "news" && window.__allNewsIds) {
+    // 開いた時点で「見た」ことにする（新着の印はこの画面を閉じるまで残す）
+    store.set("yao_seen", window.__allNewsIds);
+    $("newBadge").hidden = true;
+  }
+}
+document.querySelectorAll(".tab").forEach((t) => t.addEventListener("click", () => selectTab(t.dataset.tab)));
+
+/* ---------- LINE（LIFF）連携：LIFF_IDがあるときだけ ---------- */
+function initLiff() {
+  if (!CONFIG.LIFF_ID) return;
+  const sc = document.createElement("script");
+  sc.src = "https://static.line-scdn.net/liff/edge/2/sdk.js";
+  sc.onload = async () => {
+    try {
+      await liff.init({ liffId: CONFIG.LIFF_ID });
+      if (liff.isApiAvailable("shareTargetPicker")) {
+        $("shareBox").hidden = false;
+        $("shareBtn").addEventListener("click", async () => {
+          try {
+            await liff.shareTargetPicker([{ type: "text", text: `八尾高校の学校説明会・お知らせはこちら\nhttps://miniapp.line.me/${CONFIG.LIFF_ID}` }]);
+          } catch (e) { /* 送信をやめた場合は何もしない */ }
+        });
+      }
+    } catch (e) { console.warn("LIFF init failed", e); }
+  };
+  document.head.appendChild(sc);
+}
+
+/* ---------- 起動 ---------- */
+(async function main() {
+  try {
+    const data = await loadData();
+    const t0 = today0();
+    const upcoming = (data.events || [])
+      .filter((e) => { const d = toDate(e.date); return d && d >= t0; })
+      .sort((a, b) => toDate(a.date) - toDate(b.date));
+    const news = (data.news || []).slice().sort((a, b) => (b.pinned - a.pinned) || (toDate(b.date) - toDate(a.date)));
+    window.__allNewsIds = news.map((n) => n.id);
+
+    renderHero(data, upcoming);
+    renderEvents(upcoming);
+    renderNews(news);
+    renderInfo(data);
+    $("updated").textContent = data.updatedAt ? `最終更新 ${data.updatedAt}` : "";
+  } catch (e) {
+    $("hero").innerHTML = `<p class="school">大阪府立八尾高等学校</p><p class="next-empty">情報を読み込めませんでした。</p>`;
+    $("eventList").innerHTML = `<li class="empty">通信状態を確認して、もう一度開いてください。</li>`;
+    console.error(e);
+  }
+  initLiff();
+})();
+</script>
+</body>
+</html>
